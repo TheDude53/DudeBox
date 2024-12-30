@@ -110,6 +110,7 @@ h1, h3, h4, b, strong, th, .bold {
   text-overflow: ellipsis;
   padding: 5px;
   cursor: pointer !important;
+  outline: none;
   
   background-color: #2ec0ff;
   color: #242325;
@@ -124,4 +125,7 @@ h1, h3, h4, b, strong, th, .bold {
   color: #f7f7f8 !important;
   border: 1px solid #2ec0ff;
   border-right: 0;
+}
+#trollbox_nick_btn:hover {
+  border-color: #8fddff !important;
 }
