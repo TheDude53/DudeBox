@@ -143,9 +143,7 @@ io.on('connection', (socket) => {
 			if(users[socket.id].color!==color) {users[socket.id].color=color} // be silent about it...
 			if(users[socket.id].nick!==pseudo) {
 				ou = users[socket.id]
-				console.log(ou)
 				users[socket.id].nick = he.encode(pseudo)
-				console.log(users[socket.id])
 				io.emit('user change nick', [ou, users[socket.id]])
 				delete ou
 			}
