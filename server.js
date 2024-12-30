@@ -134,7 +134,7 @@ io.on('connection', (socket) => {
 			users[socket.id] = {nick: he.encode(pseudo), color, home}
 			console.log(`-> ${users[socket.id].nick} has entered DudeBox`)
 			d = new Date()
-			socket.emit('message', {nick: '~', color: '#fff', msg: '<b>Welcome to DudeBox: a custom version of trollbox from TheDude53.</b>\nFor more information, please visit <a href="https://github.com/TheDude53/DudeBox" target="_blank">TheDude53/DudeBox</a> (and pay <a href="https://github.com/dell-optiplex-790/tb-clone" target="_blank">the upstream project</a> a visit) on GitHub.', home: 'nodejs', date: d.getTime()})
+			socket.emit('message', {nick: '~', color: '#fff', msg: '<b>Welcome to DudeBox: a custom version of trollbox from TheDude53.</b>\nFor more information, please visit https://github.com/TheDude53/DudeBox.', home: 'nodejs', date: d.getTime()})
 			io.to('atrium').emit('user joined', users[socket.id])
 			if(!leaderboard.includes(socket.id)) {
 				leaderboard.push(socket.id)
