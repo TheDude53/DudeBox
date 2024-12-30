@@ -818,12 +818,12 @@
        if (data.nick==undefined) {data.nick="anonymous"};
        if (typeof data.nick != "string") {return};
        for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
-       if (data.nick) printMsg({date: Date.now(), color: '#0f0', nick: '→', home: data.home, msg: printNick(data) + ' <em>has entered teh trollbox</em>'});     
+       if (data.nick) printMsg({date: Date.now(), color: '#0f0', nick: '→', home: data.home, msg: printNick(data) + ' <em>has entered DudeBox</em>'});     
     });
 
     socket.on('user left', function (data) {
        for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
-       if (data.nick) printMsg({date: Date.now(), color: '#f00', nick: '←', home: data.home, msg: printNick(data) + ' <em>has left teh trollbox</em>'});
+       if (data.nick) printMsg({date: Date.now(), color: '#f00', nick: '←', home: data.home, msg: printNick(data) + ' <em>has left DudeBox</em>'});
     });
 
     socket.on('user change nick', function (data) {
