@@ -123,7 +123,8 @@ io.on('connection', (socket) => {
 	socket.on('user joined', (pseudo, color, style, pass) => {
 		if(!color) {
 			if(!colors[pseudo]) {
-				color = ['orangered', 'green', '#0088ff', '#fb8700', 'purple', 'magenta'].random()
+        // These are the basic colors from the Clarity Design System (all 400)
+				color = ["#ff386a", "#ea53ad", "#bb70db", "#6e72d8", "#3d9bff", "#2ec0ff", "#00e4f5", "#34daa3", "#71dc18", "#c9dc18", "#ffc60a", "#ffcf66", "#ff8e3d", "#ff816b"].random()
 				colors[pseudo] = color
 			} else {
 				color = colors[pseudo]
@@ -165,5 +166,4 @@ io.on('connection', (socket) => {
 // Start the server
 const PORT = process.env.PORT || 80;
 server.listen(PORT, '0.0.0.0');
-console.clear()
 console.log('Server started')

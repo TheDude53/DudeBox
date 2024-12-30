@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=block");
+* {
+  cursor: revert !important;
+}
+*::selection {
+  background-color: #f7f7f8 !important;
+  color: #242325 !important;
+}
+
+.skin_inset, #trollbox_form * {
+  border: 0;
+  margin: 0 !important;
+  box-shadow: none !important;
+  /*! text-align: unset; */
+  /*! display: inline; */
+}
+
+#trollbox_scroll, #trollbox_infos {
+  overflow-y: auto;
+  
+  padding-top: 10px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  
+  /* Colors are from the Clarity Design System (mostly the Warm Gray palette) */
+  background-color: #242325;
+  color: #f7f7f8;
+}
+#trollbox_infos {
+  width: 160px;
+  max-width: 25vw;
+  padding-right: 10px;
+  
+  border-left: 1px solid #343135;
+}
+.trollbox_msg {
+  border-color: #343135 !important;
+  min-width: 50vw;
+}
+.trollbox_msg > em {
+  opacity: 1;
+  color: #bdbbbf;
+}
+.trollbox_h {
+  color: #5a575c !important;
+  padding-right: 8px;
+  user-select: none;
+}
+.ui_group > .trollbox_nick {
+  width: 96px;
+  max-width: 20vw;
+}
+.trollbox_msg .trollbox_nick {
+  width: unset;
+  max-width: 20vw;
+}
+#trollbox_infos .trollbox_nick {
+  width: unset;
+  max-width: 100%;
+}
+
+a {
+  color: #2ec0ff;
+}
+a:hover {
+  color: #8fddff;
+}
+a:visited {
+  color: #8b8dda;
+}
+a:hover:visited {
+  color: #adafe6;
+}
+
+#trollbox_infos span[style]:not(.trollbox_nick) {
+  margin-right: 5px !important;
+}
+
+#trollbox, .trollbox_nick, #trollbox_infos *, html, body, button, input, select, option, textarea {
+  font-family: "Roboto Mono", "Noto Color Emoji", monospace !important;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+h1, h3, h4, b, strong, th, .bold {
+  font-weight: bold !important;
+  text-shadow: none;
+  letter-spacing: unset;
+}
+
+#trollbox_form {
+  height: 48px;
+  max-height: 10vh;
+  background-color: #242325;
+}
+#trollbox_input {
+  padding: 5px;
+  outline: none;
+  
+  background-color: #f7f7f8;
+  color: #242325;
+}
+#trollbox_input::selection {
+  background-color: #242325 !important;
+  color: #f7f7f8 !important;
+}
+#trollbox_form button {
+  max-width: 25vw;
+  min-width: 96px;
+  text-overflow: ellipsis;
+  padding: 5px;
+  cursor: pointer !important;
+  
+  background-color: #2ec0ff;
+  color: #242325;
+  border-radius: 0 5px 5px 0;
+}
+#trollbox_form button:hover {
+  background-color: #8fddff;
+}
+#trollbox_nick_btn {
+  border-radius: 5px 0 0 5px !important;
+  background-color: inherit !important;
+  color: #f7f7f8 !important;
+  border: 1px solid #2ec0ff;
+  border-right: 0;
+}

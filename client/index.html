@@ -10,12 +10,12 @@
   <meta name="author" content="TheDude53, jankenpopp, zombectro">
   <meta http-equiv="Content-Language" content="en_US" />
   <meta name="google" content="notranslate" />
-  <link rel="shortcut icon" type="image/x-icon" href="https://dudebot-official.glitch.me/favicon.ico" />
 
   <link rel="stylesheet" href="/c/sys42.css">
   <link rel="stylesheet" href="w93.css" id="w93_skin">
   <link rel="stylesheet" href="/sys/hotfix.css?v=2.4.8"></head>
   <link rel="stylesheet" href="trollbox/trollbox.css?v=3">
+  <link rel="stylesheet" href="./override.css">
   <script src="/c/libs/jquery.min.js"></script>
   <script type="text/javascript" src="suncalc.js"></script>
   <script type="text/javascript" src="he.js"></script>
@@ -120,10 +120,10 @@
       "___________             .__  .__ __________                                          \n"+        
       "\\__    ___/______  ____ |  | |  |\\______   \\ _______  ___                         \n"+
       "   |    |  \\_  __ \\/  _ \\|  | |  | |    |  _//  _ \\  \\/  /                      \n"+
-      "   |    |   |  | \\(  <_> )  |_|  |_|    |   (  <_> >    <     DudeBox edition       \n"+
+      "   |    |   |  | \\(  <_> )  |_|  |_|    |   (  <_> >    <  DudeBox edition          \n"+
       "   |____|   |__|   \\____/|____/____/______  /\\____/__/\\_ \\ (v2.1)                \n"+
       "                                          \\/            \\/                         \n"+
-      "––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––--–\n"+
+      "–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n"+
       "| COMMANDS:                                                                         |\n"+
       "| /color htmlColor       eg: /color #C3FF00                                         |\n"+
       "| /sin text period       eg: /sin # 50                                              |\n"+
@@ -162,7 +162,6 @@
       "| /r                     shortcut for /room                                         |\n"+
       "| /scroll                toggle auto scroll                                         |\n"+
       "| /clear                 clear teh chat                                             |\n"+
-      "| Suggestions?           try asking dell for it if he's online                      |\n"+
       "–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n";
   </script>
   <!--<script src="/socket.io/socket.io.js"></script>-->
@@ -245,12 +244,7 @@
     }
 
     function h(dt) {
-      var dt = new Date(dt);
-      var h = dt.getHours()+'';
-      h = h.length > 1 ? h : '0' + h
-      var m = dt.getMinutes()+'';
-      m = m.length > 1 ? m : '0' + m
-      return h+':'+m
+      return new Date(dt).toLocaleTimeString();
     }
 
     function RegExpEscape(text) {
@@ -301,7 +295,7 @@
     function printNick (data) {
 
         if (data.nick==undefined) {data.nick='●'};
-        if (data.color==undefined) {data.color='white'};
+        if (data.color==undefined) {data.color='#f7f7f8'};
         if (data.style==undefined) {data.style=''};
         if (decodeHtmlEntity(data.nick)==""){data.nick='●'};
         if (typeof data.nick != "string") {return};
@@ -337,7 +331,7 @@
       
       if (typeof msg !== 'string') return;
       
-      if (color == undefined) {color='white'};
+      if (color == undefined) {color='#f7f7f8'};
       if (style == undefined) {style=''};
 
       var cmd = getCmd(msg);
@@ -366,7 +360,7 @@
             pitch = parseFloat(cmd.val);
             if (pitch<0) {pitch=0}; if (pitch>=2) {pitch=2.0};
             $store.set('.config/trollbox/pitch', pitch);
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Pitch set to: "+pitch };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Pitch set to: "+pitch };
             printMsg(dada);
             return;
           }     
@@ -375,7 +369,7 @@
             rate = parseFloat(cmd.val);
             if (rate<0.1) {rate=0.1}; if (rate>=10) {rate=10.0};
             $store.set('.config/trollbox/rate', rate);
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Rate set to: "+rate };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Rate set to: "+rate };
             printMsg(dada);
             return;
           }    
@@ -383,7 +377,7 @@
           if (cmd.cmd === 'voice'&&voices.length>0) {
             voice = parseInt(cmd.val)%voices.length;
             $store.set('.config/trollbox/voice', voice);
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Voice set to: "+voices[voice].name };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Voice set to: "+voices[voice].name };
             printMsg(dada);
             return;
           } 
@@ -400,13 +394,13 @@
             if (cmd.val=='on') {
               imgShow=true;
                $store.set('.config/trollbox/img', imgShow);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Show images: ON" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Show images: ON" };
               printMsg(dada);
             }
             if (cmd.val=='off') {
               imgShow=false;
                $store.set('.config/trollbox/img', imgShow);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Show images: OFF" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Show images: OFF" };
               printMsg(dada);
             }
             return;
@@ -415,13 +409,13 @@
             if (cmd.val=='on') {
               ytShow=true;
                $store.set('.config/trollbox/yt', ytShow);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Youtube player: ON" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Youtube player: ON" };
               printMsg(dada);
             }
             if (cmd.val=='off') {
               ytShow=false;
                $store.set('.config/trollbox/yt', ytShow);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Youtube player: OFF" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Youtube player: OFF" };
               printMsg(dada);
             }
             return;
@@ -430,13 +424,13 @@
             if (cmd.val=='on') {
               emoticons=true;
                $store.set('.config/trollbox/emoticons', emoticons);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Emoticon: ON" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Emoticon: ON" };
               printMsg(dada);
             }
             if (cmd.val=='off') {
               emoticons=false;
                $store.set('.config/trollbox/emoticons', emoticons);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Emoticon: OFF" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Emoticon: OFF" };
               printMsg(dada);
             }
             return;
@@ -451,7 +445,7 @@
             if (cmd.val=='off') {
               sin=false;
                $store.set('.config/trollbox/sin', sin);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Sin: OFF" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Sin: OFF" };
               printMsg(dada);
               return;
             }
@@ -462,14 +456,14 @@
             if (cmd.val=='on') {
               speech=true;
                $store.set('.config/trollbox/speech', speech);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Speech: ON" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Speech: ON" };
               printMsg(dada);
               return;
             }
             if (cmd.val=='off') {
               speech=false;
                $store.set('.config/trollbox/speech', speech);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Speech: OFF" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Speech: OFF" };
               printMsg(dada);
               return;
             } 
@@ -483,7 +477,7 @@
                $store.set('.config/trollbox/img', imgShow);
                $store.set('.config/trollbox/speech', speech);
                $store.set('.config/trollbox/emoticons', emoticons);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Major League Gaming: ON" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Major League Gaming: ON" };
               printMsg(dada);
             }
             if (cmd.val=='off') {
@@ -494,7 +488,7 @@
                $store.set('.config/trollbox/img', imgShow);
                $store.set('.config/trollbox/speech', speech);
                $store.set('.config/trollbox/emoticons', emoticons);
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "Major League Gaming: OFF" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "Major League Gaming: OFF" };
               printMsg(dada);
             }
             return;
@@ -522,7 +516,7 @@
             blocked=uniq(blocked);
             $store.set('.config/trollbox/blocked', blocked);
             userMsg = 'User is now blocked.';
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: userMsg };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: userMsg };
             printMsg(dada);
             return;
           }
@@ -539,7 +533,7 @@
             blocked=uniq(blocked);
             $store.set('.config/trollbox/blocked', blocked);
             userMsg = 'User is now unblocked';
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: userMsg };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: userMsg };
             printMsg(dada);
             return;
           }
@@ -557,7 +551,7 @@
               fontName=fontNames[(myfont%fontNames.length)];
               $store.set('.config/trollbox/font', fontName);
               temp = 'Font selected: '+fontName;
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: temp }; 
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: temp }; 
               printMsg(dada);
               return;             
             }
@@ -573,14 +567,14 @@
         }
         if ( (msg=='/normal')||(msg=='lɐɯɹou/')||(msg=='/n0rm4l') ) {   
             messageStyle = "normal";
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "back to normal mode" };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "back to normal mode" };
             printMsg(dada);      
             $('#trollbox').css('transform','rotate(0deg)');      
             return;           
         }
         if ((msg=='/reverse')||(msg=='ǝsɹǝʌǝɹ/')||(msg=='/r3v3r53')) {   
             if (messageStyle!="upDown") {
-              dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "reverse mode: ON" };
+              dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "reverse mode: ON" };
               printMsg(dada);              
             };
             messageStyle = "upDown";
@@ -589,20 +583,20 @@
         }        
         if ((msg=='/l337')||(msg=='ㄥƐƐl/')) { 
             messageStyle = "l337";
-            dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: "leet mode: ON" };
+            dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: "leet mode: ON" };
             printMsg(dada);
             $('#trollbox').css('transform','rotate(0deg)');
             return;           
         }
 
         if (msg=='/help') {
-          dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: helpMsg };
+          dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: helpMsg };
           printMsg(dada);
           return;
         }            
 
         if (msg=='/scroll') { 
-          dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: 'Auto Scroll: '+!scroll };
+          dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: 'Auto Scroll: '+!scroll };
           scrollDown ()
           scroll=!scroll;
           printMsg(dada);
@@ -619,7 +613,7 @@
           blocked=[];
           $store.set('.config/trollbox/blocked', blocked);
           userMsg = 'Block list cleared.';
-          dada = { date: Date.now(), nick: "~", color: "white", style: "opacity: 0.7;", home: 'local', msg: userMsg };
+          dada = { date: Date.now(), nick: "~", color: "#f7f7f8", style: "opacity: 0.7;", home: 'local', msg: userMsg };
           printMsg(dada);
           return;
         }
@@ -719,7 +713,7 @@
         amplitude = parseInt(Math.random()*100);
       }
         if (data.nick==undefined) {data.nick="anonymous"};
-        if (data.color==undefined) {data.color="white"};
+        if (data.color==undefined) {data.color="#f7f7f8"};
         if (data.style==undefined) {data.style=""};
         if (sin) {
           sinFlood(string, amplitude,data.nick,data.color,data.style)
@@ -818,18 +812,18 @@
        if (data.nick==undefined) {data.nick="anonymous"};
        if (typeof data.nick != "string") {return};
        for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
-       if (data.nick) printMsg({date: Date.now(), color: '#0f0', nick: '→', home: data.home, msg: printNick(data) + ' <em>has entered DudeBox</em>'});     
+       if (data.nick) printMsg({date: Date.now(), color: '#71dc18', nick: '>', home: data.home, msg: printNick(data) + ' <em>has entered DudeBox</em>'});     
     });
 
     socket.on('user left', function (data) {
        for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
-       if (data.nick) printMsg({date: Date.now(), color: '#f00', nick: '←', home: data.home, msg: printNick(data) + ' <em>has left DudeBox</em>'});
+       if (data.nick) printMsg({date: Date.now(), color: '#ff816b', nick: '<', home: data.home, msg: printNick(data) + ' <em>has left DudeBox</em>'});
     });
 
     socket.on('user change nick', function (data) {
         if (data[0].nick==data[1].nick) {return};
         for (var i = 0; i < blocked.length; i++) { if (data[1].home==blocked[i]) {return} };
-        if (data[1].nick) printMsg({date: Date.now(), color: '#af519b', nick: '~', home: data[1].home, msg: printNick(data[0]) + ' <em>is now known as</em> ' + printNick(data[1])});
+        if (data[1].nick) printMsg({date: Date.now(), color: '#f7f7f8', nick: '~', home: data[1].home, msg: printNick(data[0]) + ' <em>is now known as</em> ' + printNick(data[1])});
     });
 
     socket.on('message', function (data) {
@@ -841,11 +835,11 @@
       if(document.hasFocus()==false){
         noFocusMsg = noFocusMsg + 1;
         if(noFocusMsg>0){
-          document.title = 'trollbox ('+noFocusMsg+')';
+          document.title = 'DudeBox ('+noFocusMsg+')';
         }
       }else{
         noFocusMsg=0;
-        document.title = 'trollbox';
+        document.title = 'DudeBox';
       }
       //
     });
@@ -1100,7 +1094,7 @@
           url = 'pix.php?url='+url+'&nick='+pseudo;
         $('#dogeFrame').html('<iframe src="'+url+'" style="visibility:hidden;position:absolute;"></iframe>');
         }else{
-           dada = { date: Date.now(), nick: "Ascii", color: "white", style: "opacity: 0.7;",home: 'local', msg: "You need a name to use me." };
+           dada = { date: Date.now(), nick: "Ascii", color: "#f7f7f8", style: "opacity: 0.7;",home: 'local', msg: "You need a name to use me." };
            printMsg(dada);
         }
       }
