@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
 });
 
 // Start the server
-const PORT = 80;
+const PORT = process.env.PORT || 80;
 server.listen(PORT, '0.0.0.0');
 console.clear()
 console.log('Server started')
