@@ -115,7 +115,6 @@ io.on('connection', (socket) => {
 				return;
 			}
 
-			console.log(`${he.decode(users[socket.id].nick)} (from ${Object.keys(socket.rooms)[0]}): ${data}`)
 			io.to(Object.keys(socket.rooms)[0]).emit('message', {...users[socket.id], msg: he.encode(data), date: d.getTime()});
 			delete d
 		}
