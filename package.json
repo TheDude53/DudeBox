@@ -1,4 +1,7 @@
 {
+  "name": "tb-clone",
+  "version": "1.0.3",
+  "private": true,
   "dependencies": {
     "express": "^4.21.1",
     "he": "^1.2.0",
