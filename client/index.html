@@ -15,7 +15,6 @@
   <link rel="stylesheet" href="w93.css" id="w93_skin">
   <link rel="stylesheet" href="/sys/hotfix.css?v=2.4.8"></head>
   <link rel="stylesheet" href="trollbox/trollbox.css?v=3">
-  <link rel="stylesheet" href="./override.css">
   <script src="/c/libs/jquery.min.js"></script>
   <script type="text/javascript" src="suncalc.js"></script>
   <script type="text/javascript" src="he.js"></script>
@@ -28,9 +27,19 @@
       <aside id="trollbox_infos" class="skin_inset w150p"></aside>
     </article>
   </section>
+  <dialog id="dudebox_settings_box">
+    <h1>Settings</h1>
+    
+    <input id="dudebox_settings_theme" type="checkbox"><label for="dudebox_settings_theme">Enable DudeBox theme</label>
+    
+    <p>To apply your changes, please refresh this page.</p>
+    <form method="dialog">
+      <button>Close</button>
+    </form>
+  </dialog>
   <footer>
     <form action="" id="trollbox_form" class="ui_group">
-      <button id="trollbox_nick_btn" type="button">Nick</button><textarea id="trollbox_input" autocomplete="off"></textarea><button>Send</button>
+      <button id="trollbox_nick_btn" type="button">Nick</button><button id="dudebox_settings_btn">⚙️</button><textarea id="trollbox_input" autocomplete="off"></textarea><button>Send</button>
     </form>
   </footer>
   <script>   
@@ -137,7 +146,6 @@
       "| /img on/off            activate image embedding (do this at your own risk)        |\n"+
       "| /yt on/off             activate youtube embedding                                 |\n"+
       "| /k&zwnj;ao                   random kaomoji                                             |\n"+
-      "| /emo on/off            activate/desactivate ugly emoticons                        |\n"+
       "| /say something         make browser say something                                 |\n"+
       "| /say off               mute speech synthesizer                                    |\n"+
       "| /pitch 1.5             set speech pitch (from 0.0 to 2.0) (FF)                    |\n"+
@@ -147,10 +155,6 @@
         helpMsg=helpMsg+"| /voice 3               set speech voice (from 0 to "+voices.length+", may bypass pitch and rate)  |\n";
       };
       helpMsg=helpMsg+"| /zalgo [text]          he comes                                                   |\n"+
-      "| /vapor [text]          aesthetics                                                 |\n"+
-      "| /wrap [text]           wrap in flourish                                           |\n"+
-      "| /mess [text]           useless                                                    |\n"+
-      "| /ascii imageUrl        ascii art converter                                        |\n"+
       "| /who                   list users by [home]                                       |\n"+
       "| /o                     shortcut for /who                                          |\n"+
       "| /block [home]          block user (or right click user's name, on the right)      |\n"+
@@ -1204,6 +1208,39 @@ window.onresize = function() {
     return String.fromCharCode(dec);
   });
 };
+</script>
+
+<script>
+  (()=>{
+    "use strict";
+    // DudeBox stuff
+    
+    // Settings dialog
+    const settingsBox = document.getElementById("dudebox_settings_box");
+    const settingsBtn = document.getElementById("dudebox_settings_btn");
+    settingsBtn.onclick = ()=>{
+      settingsBox.showModal();
+    };
+    const settingsTheme = document.getElementById("dudebox_settings_theme");
+    settingsTheme.oninput = ()=>{
+      $store.set(".config/trollbox/dudebox_theme", settingsTheme.checked);
+    };
+    
+    // Load DudeBox theme
+    if ($store.get(".config/trollbox/dudebox_theme") === null) {
+      // Set default for first-time users
+      $store.set(".config/trollbox/dudebox_theme", true);
+    };
+    if ($store.get(".config/trollbox/dudebox_theme")) {
+      settingsTheme.checked = true;
+      
+      const css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "./override.css";
+      document.head.appendChild(css);
+    };
+    
+  })();
 </script>
 </div>
 </body>

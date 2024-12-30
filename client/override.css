@@ -96,6 +96,7 @@ h1, h3, h4, b, strong, th, .bold {
 #trollbox_input {
   padding: 5px;
   outline: none;
+  border-radius: 0;
   
   background-color: #f7f7f8;
   color: #242325;
@@ -119,13 +120,48 @@ h1, h3, h4, b, strong, th, .bold {
 #trollbox_form button:hover {
   background-color: #8fddff;
 }
-#trollbox_nick_btn {
+#trollbox_nick_btn, #dudebox_settings_btn {
   border-radius: 5px 0 0 5px !important;
   background-color: inherit !important;
   color: #f7f7f8 !important;
   border: 1px solid #2ec0ff;
   border-right: 0;
 }
-#trollbox_nick_btn:hover {
+#trollbox_nick_btn:hover, #dudebox_settings_btn:hover {
   border-color: #8fddff !important;
+}
+
+#dudebox_settings_btn {
+  border-radius: 0 !important;
+  width: 48px;
+  min-width: unset !important;
+  cursor: pointer !important;
+}
+#dudebox_settings_box {
+  background-color: #343135;
+  color: #f7f7f8;
+  border: 0;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: #242325 0 0 10px;
+}
+#dudebox_settings_box > h1 {
+  margin-bottom: 10px;
+}
+#dudebox_settings_box > form {
+  margin-top: 10px;
+}
+#dudebox_settings_box input {
+  margin-right: 5px;
+  vertical-align: text-bottom !important;
+}
+#dudebox_settings_box button {
+  border: 0;
+  border-radius: 5px;
+  box-shadow: none;
+  
+  padding: 5px;
+  float: right;
+  
+  background-color: #2ec0ff;
 }
