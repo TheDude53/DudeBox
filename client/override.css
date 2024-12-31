@@ -117,7 +117,7 @@ h1, h3, h4, b, strong, th, .bold {
   color: #242325;
   border-radius: 0 5px 5px 0;
 }
-#trollbox_form button:hover {
+#trollbox_form button:hover, #dudebox_settings_box button:hover {
   background-color: #8fddff;
 }
 #trollbox_nick_btn, #dudebox_settings_btn {
@@ -159,6 +159,8 @@ h1, h3, h4, b, strong, th, .bold {
   border: 0;
   border-radius: 5px;
   box-shadow: none;
+  outline: none;
+  cursor: pointer !important;
   
   padding: 5px;
   float: right;
