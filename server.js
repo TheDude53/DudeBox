@@ -1,169 +1,349 @@
-var users = {}
-var colors = {}
-var leaderboard = []
-var he = require('he')
-var fs = require('fs')
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const { createHash } = require('crypto');
-Array.prototype.random = function(){
-	return this[Math.floor(Math.random()*this.length)];
-}
+// DudeBox server by Chris Helder (TheDude53/Dude)
+"use strict";
+
+console.log("Loading DudeBox server...");
+
+// Load configuration (see config.js)
+const {
+  adminDash,
+  adminUser,
+  adminPass,
+  defaultColors,
+  logChatEvents,
+  logMessages,
+  logToFile,
+  messageHistory,
+  serverPort,
+  systemNick,
+  systemColor,
+  welcomeMsg
+} = require("./config.js");
+
+// Prepare the great HTML entity utility
+const he = require("he");
+
+// Function for removing newlines
+function stripNewlines(text) {
+  return text.replace(/[\r\n\u2028\u2029]/g, "");
+};
+
+// Optional logging functions
+function logCE(stuff) {
+  if (!logChatEvents) {
+    return;
+  };
+  
+  // Parse HTML entities and force String conversion
+  stuff = he.decode(stuff + "");
+  console.log(stuff);
+  
+  if (logToFile) {
+    // Print to file
+    require("fs").appendFile(logToFile, stuff + "\n", ()=>{});
+  };
+};
+function logM(stuff) {
+  if (!logMessages) {
+    return;
+  };
+  
+  // Parse HTML entities and force String conversion
+  stuff = he.decode(stuff + "");
+  console.log(stuff);
+  
+  if (logToFile) {
+    // Print to file
+    require("fs").appendFile(logToFile, stuff + "\n", ()=>{});
+  };
+};
 
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
 
-function findRooms() {
-    var availableRooms = [];
-    var rooms = io.sockets.adapter.rooms;
-
-    if (rooms) {
-        for (var room in rooms) {
-            if (rooms[room].sockets) {
-                availableRooms.push({
-                    name: room,
-                    members: rooms[room].length
-                });
-            }
-        }
-    }
-
-    return availableRooms;
-}
-
-
-
-app.use(express.static('client'));
-
-
-function printNick(n) {return `<span style="color:${he.decode(n.color)}">${he.decode(n.nick)}</span>`}
-
-function check_for_ban(socket) {
-	banned_users = JSON.parse(fs.readFileSync('configs/banned_users.json').toString())
-	home = createHash('sha256').update(socket.handshake.address).digest('hex')
-	if(banned_users.includes(home)) {
-		d = new Date()
-		socket.emit('message', {nick: '~', color: '#fff', msg: '<em>you have been banned from DudeBox</em>', home: 'nodejs', date: d.getTime()})
-		socket.disconnect()
-		if(users[socket.id]) {
-			io.emit('message', {color: '#f00', nick: '←', msg: printNick(users[socket.id]) + ' <em>has been banned from DudeBox</em>', home: 'nodejs', date: d.getTime()})
-			leaderboard.splice(leaderboard.indexOf(socket.id), 1) // leaderboard fix
-			io.emit('update users', leaderboard.map(u=>users[u]))
-			delete users[socket.id]
-		}
-	}
-}
-
-
-function goto_room(socket, r) {
-	PREV_ROOM = Object.keys(socket.rooms)[0]
-	socket.join(r)
-	socket.leave(PREV_ROOM)
-	msg = {nick: '~', color: '#fff', msg: printNick(users[socket.id])+' has entered room: <b>' + he.encode(r) + '</b>', home: 'nodejs', date: d.getTime()}
-	io.to(PREV_ROOM).to(r).emit('message', msg)
-	console.log(`~ ${users[socket.id].nick} has entered room: ${r}`)
-}
-
-
-io.on('connection', (socket) => {
-	check_for_ban(socket)
-	socket.join('atrium'); // default room
-	socket.leave(socket.id)
-    socket.on('message', (data) => {
-		check_for_ban(socket)
-        if(users[socket.id]) {
-			d = new Date()
-			wb = JSON.parse(fs.readFileSync('configs/banned_words.json').toString())
-			for(i=0;i<wb.length;i++) {
-				if(data.toLowerCase().includes(wb[i])) {
-					return
-				}
-			}
-			if(data.startsWith('/r ')) {
-				goto_room(socket, data.slice(3))
-				return
-			}
-			
-			if(data.startsWith('/room ')) {
-				goto_room(socket, data.slice(6))
-				return
-			}
-			
-			if(data==='/a') {
-				goto_room(socket, 'atrium')
-				return
-			}
-			
-			if(data==='/r'||data==='/room') {
-				rs = findRooms()
-				msg = `Your current room is: <b>${Object.keys(socket.rooms)[0]}</b>\n––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\nOnline rooms:\n`
-				for(i=0;i<rs.length;i++) {
-					msg += `${rs[i].name} (${rs[i].members})\n`
-				}
-				socket.emit('message', {nick: '~', color: '#fff', msg: msg, home: 'nodejs', date: d.getTime()})
-				return
-			}
-
-			if(data==='/o'||data==='/who') {
-				msg = 'Users:\n=======================' + leaderboard.map(e => {
-					return `\nUsername: ${users[e].nick}\nColor: ${users[e].color}\nHome: ${users[e].home}`
-				}).join('\n=======================') + '\n======================='
-				socket.emit('message', {nick: '~', color: '#fff', msg: msg, home: 'nodejs', date: d.getTime()})
-				return;
-			}
-
-			io.to(Object.keys(socket.rooms)[0]).emit('message', {...users[socket.id], msg: he.encode(data), date: d.getTime()});
-			delete d
-		}
-    });
-	
-	socket.on('user joined', (pseudo, color, style, pass) => {
-		if(!color) {
-			if(!colors[pseudo]) {
-        // These are the basic colors from the Clarity Design System (all 400)
-				color = ["#ff386a", "#ea53ad", "#bb70db", "#6e72d8", "#3d9bff", "#2ec0ff", "#00e4f5", "#34daa3", "#71dc18", "#c9dc18", "#ffc60a", "#ffcf66", "#ff8e3d", "#ff816b"].random()
-				colors[pseudo] = color
-			} else {
-				color = colors[pseudo]
-			}
-		}
-		if(!users[socket.id]) {
-			home = createHash('sha256').update(socket.handshake.address).digest('hex');
-			users[socket.id] = {nick: he.encode(pseudo), color, home}
-			console.log(`-> ${users[socket.id].nick} has entered DudeBox`)
-			d = new Date()
-			socket.emit('message', {nick: '~', color: '#fff', msg: '<b>Welcome to DudeBox: a custom version of trollbox from TheDude53.</b>\nFor more information, please visit https://github.com/TheDude53/DudeBox.', home: 'nodejs', date: d.getTime()})
-			io.to('atrium').emit('user joined', users[socket.id])
-			if(!leaderboard.includes(socket.id)) {
-				leaderboard.push(socket.id)
-			}
-		} else {
-			if(users[socket.id].color!==color) {users[socket.id].color=color} // be silent about it...
-			if(users[socket.id].nick!==pseudo) {
-				ou = users[socket.id]
-				users[socket.id].nick = he.encode(pseudo)
-				io.emit('user change nick', [ou, users[socket.id]])
-				delete ou
-			}
-		}
-		io.emit('update users', leaderboard.map(u=>users[u]))
-	})
-
-    socket.on('disconnect', () => {
-		if(users[socket.id]) {
-			io.emit('user left', users[socket.id])
-			console.log(`<- ${he.decode(users[socket.id].nick)} has left DudeBox`)
-			leaderboard.splice(leaderboard.indexOf(socket.id), 1) // leaderboard fix
-			io.emit('update users', leaderboard.map(u=>users[u]))
-			delete users[socket.id]
-		}
-    });
+// Load servers
+const server = require("http-server").createServer({
+  root: "./client/",
+  headers: {
+    "Accept-Ranges": "bytes",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Server": "Node.js " + process.version
+  },
+  showDir: false,
+  autoIndex: false,
+  showDotfiles: false,
+  gzip: true,
+  brotli: true
 });
 
-// Start the server
-const PORT = process.env.PORT || 80;
-server.listen(PORT, '0.0.0.0');
-console.log('Server started')
+const io = new (require("socket.io").Server)(server.server, {
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 60000,
+    skipMiddlewares: true
+  },
+  allowEIO3: true,
+  cors: {
+    origin: "*",
+    allowedHeaders: ["*"],
+    credentials: true
+  },
+  maxHttpBufferSize: 1024 * 256, // Limit message size to 256 KB (they shouldn't need to be bigger anyway)
+  upgradeTimeout: 15000
+});
+// Socket.io admin UI
+if (process.env.DB_ADMINUI || adminDash) {
+  require("@socket.io/admin-ui").instrument(io, {
+    auth: {
+      type: "basic",
+      username: process.env.DB_ADMINUI_USER || adminUser,
+      password: require("bcryptjs").hashSync(process.env.DB_ADMINUI_PASS || adminPass)
+    },
+    serverId: "DudeBox (PID: " + process.pid + ")"
+  });
+};
+
+
+
+// Master user list (we can use a Set because it maintains insertion order)
+const users = new Set();
+
+// Optional message history Array
+const history = [];
+
+function updateUsers() {
+  // Update full user list for everyone
+  const userList = {};
+  
+  // Add users into user list
+  for (const userSocket of users) {
+    userList[userSocket.id] = userSocket.user;
+  };
+  
+  // Send out user list
+  io.emit("update users", userList);
+};
+
+
+
+// Main connection handler
+io.on("connection", (socket)=>{
+  // Handle disconnects
+  socket.on("disconnect", ()=>{
+    socket.removeAllListeners();
+    
+    // If the user never entered (hence no user property), don't bother with stuff
+    if (!socket.user) {
+      socket = null;
+      return;
+    };
+    
+    // Remove from users list
+    users.delete(socket);
+    
+    // Announce user departure
+    io.to(socket.user.room).emit("user left", socket.user);
+    logCE(socket.user.nick + " has left");
+    
+    updateUsers();
+    
+    // Wipe socket for garbage collection
+    socket = null;
+  });
+  
+  
+  // Username/color change handler
+  socket.on("user joined", (nick, color, style, pass)=>{
+    // Get real IP address (even behind forwarders)
+    const ip = socket.handshake.headers["cf-connecting-ip"] || socket.handshake.headers["fastly-client-ip"] || socket.handshake.headers["x-forwarded-for"]?.split(",")[0] || socket.handshake.headers["forwarded"]?.match(/for=([^;]+)/)[1] || socket.handshake.address;
+    
+    // Keep previous user object
+    const prevUser = socket.user;
+    
+    // Create full user object (with defaults just in case, and making sure to avoid arbitrary execution garbage)
+    socket.user = {
+      nick: he.encode(stripNewlines(nick + "")) || "anonymous",
+      color: he.encode(stripNewlines(color + "")) || defaultColors[Math.floor(Math.random() * defaultColors.length)],
+      style: he.encode(style + "") || "",
+      // This is probably a good enough hashing algorithm, although you can always brute-force this kind of thing
+      home: socket.user?.home || require("crypto").createHash("sha512-256").update(ip).digest("hex"),
+      room: socket.user?.room || "atrium",
+      isBot: false // Come on, nobody's a bot here
+    };
+    
+    // Push new user sockets into users list
+    if (!users.has(socket)) {
+      users.add(socket);
+    };
+    
+    // Determine if user is joining or changing nickname
+    if (prevUser) {
+      // Just changing nickname
+      io.to(socket.user.room).emit("user change nick", [prevUser, socket.user]);
+      logCE(prevUser.nick + " is now known as " + socket.user.nick);
+    } else {
+      // Let's see about getting this new user up to speed
+      if (messageHistory) {
+        socket.emit("update history", history);
+      };
+      
+      // Only start sending messages after joining (prevents hidden chat loggers)
+      socket.join("atrium");
+      
+      // A new user has appeared; announce user join
+      io.to(socket.user.room).emit("user joined", socket.user);
+      logCE(socket.user.nick + " has joined");
+    };
+    
+    updateUsers();
+  });
+  
+  
+  // Message handling
+  socket.on("message", (message)=>{
+    // Ignore messages if the user hasn't actually joined
+    if (!socket.user) {
+      return;
+    };
+    
+    // Ensure message is actually a string
+    message = message + "";
+    
+    // Also check that the message isn't blank
+    if (!message.trim().length) {
+      return;
+    };
+    
+    logM(socket.user.nick + ": " + message);
+    
+    // /a is just an alias for /room atrium
+    if (message === "/a") {
+      message = "/room atrium";
+    };
+    
+    // Respond to server-side command messages
+    if (message === "/r" || message === "/room") {
+      let response = "Your current room is: <b>" + he.encode(socket.user.room) + "</b>\n" + "–".repeat(85) + "\nOnline rooms:\n";
+      
+      // Get a Set of socket IDs
+      const sids = io.of("/").adapter.sids;
+      
+      // Compile a list of open rooms
+      io.of("/").adapter.rooms.forEach((roomSet, roomName)=>{
+        // If the room is just a private sid, ignore it
+        if (sids.has(roomName)) {
+          return;
+        };
+        
+        response += roomName + " (" + roomSet.size + ")\n";
+      });
+      
+      // Send the list off
+      socket.emit("message", {
+        nick: systemNick,
+        color: systemColor,
+        style: "opacity: 0.7;",
+        home: "trollbox",
+        date: Date.now(),
+        msg: response.slice(0, response.length - 1)
+      });
+    } else if (message.startsWith("/r ") || message.startsWith("/room ")) {
+      // Room switching time! Replace alias and blank space just to make things easier, then slice out command
+      const room = stripNewlines(message.replace(/^\/r /, "/room ")).trim().slice(6);
+      
+      // Check that a room is specified AND isn't the current one
+      if (!room || socket.user.room === room) {
+        return;
+      };
+      
+      // Prevent joining a private sid room
+      if (io.of("/").adapter.sids.has(room)) {
+        return;
+      };
+      
+      // Leave old room
+      const oldRoom = socket.user.room;
+      socket.leave(socket.user.room);
+      
+      // Set new room and join it
+      socket.user.room = room;
+      socket.join(socket.user.room);
+      
+      // Alert both rooms of the new development
+      io.to([oldRoom, socket.user.room]).emit("message", {
+        nick: systemNick,
+        color: systemColor,
+        style: "opacity: 0.7;",
+        home: "trollbox",
+        date: Date.now(),
+        msg: "<span class='trollbox_nick' style='color:" + socket.user.color + ";'>" + socket.user.nick + "</span> has entered room: <b>" + socket.user.room + "</b>"
+      });
+    } else if (message === "/o" || message === "/who") {
+      // List all active users + homes
+      const line = "–".repeat(85);
+      let response = line + "\n";
+      
+      // Sort users into object by home
+      const homeSorted = {};
+      for (const userSocket of users) {
+        // Create Array for new homes
+        homeSorted[userSocket.user.home] ||= [];
+        
+        homeSorted[userSocket.user.home].push(userSocket.user.nick);
+      };
+      
+      // Format data for response
+      for (const home in homeSorted) {
+        response += "Home    | " + home + "\nName(s) | ";
+        
+        // List names
+        response += homeSorted[home].join("\n        | ");
+        
+        // The bottom line
+        response += "\n" + line + "\n";
+      };
+      
+      socket.emit("message", {
+        nick: systemNick,
+        color: systemColor,
+        style: "opacity: 0.7;",
+        home: "trollbox",
+        date: Date.now(),
+        msg: response
+      });
+    } else {
+      // Otherwise just broadcast the message (user object merged with date and message object)
+      message = Object.assign({date: Date.now(), msg: he.encode(message)}, socket.user);
+      
+      io.to(socket.user.room).emit("message", message);
+      
+      // Store it in message history (if applicable)
+      if (messageHistory) {
+        history.push(message);
+      };
+    };
+  });
+  
+  
+  // Some clients still like to rely on the `_connected` event, so we'll humor them here
+  socket.emit("_connected");
+  
+  
+  if (welcomeMsg) {
+    // This isn't an official feature, but I like to send a welcome message to the user
+    socket.emit("message", {
+      nick: systemNick,
+      color: systemColor,
+      style: "",
+      home: "trollbox",
+      date: Date.now(),
+      msg: welcomeMsg
+    });
+  };
+});
+
+
+
+// Start it up
+const port = process.env.PORT || serverPort || 8081;
+server.listen(port);
+
+console.log("Now listening on port " + port);

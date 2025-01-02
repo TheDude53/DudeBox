@@ -1,14 +1,25 @@
 {
-  "name": "tb-clone",
-  "version": "1.0.3",
-  "private": true,
-  "dependencies": {
-    "express": "^4.21.1",
-    "he": "^1.2.0",
-    "socket.io": "^2.5.1"
-  },
+  "name": "dudebox",
+  "version": "2.0.0",
+  "license": "WTFPL",
+  "contributors": [
+    {
+      "name": "TheDude53",
+      "url": "https://thedude53.surge.sh"
+    }
+  ],
+  "homepage": "https://dudebox.glitch.me",
+  "main": "server.js",
   "scripts": {
     "start": "node glitchSync.js",
-    "directStart": "node server.js"
-  }
+    "server": "node server.js"
+  },
+  "bin": "server.js",
+  "dependencies": {
+    "socket.io": "4.x",
+    "@socket.io/admin-ui": "latest",
+    "he": "latest",
+    "http-server": "14.x"
+  },
+  "private": true
 }

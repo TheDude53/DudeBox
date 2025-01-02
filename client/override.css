@@ -41,6 +41,11 @@
   opacity: 1;
   color: #bdbbbf;
 }
+.trollbox_msg > iframe, .trollbox_msg > img {
+  max-width: 100%;
+  max-height: 50vh;
+  margin: 5px 0 5px;
+}
 .trollbox_h {
   color: #5a575c !important;
   padding-right: 8px;
@@ -93,15 +98,16 @@ h1, h3, h4, b, strong, th, .bold {
   max-height: 10vh;
   background-color: #242325;
 }
-#trollbox_input {
+#trollbox_input, #dudebox_settings_server {
   padding: 5px;
   outline: none;
+  border: 0;
   border-radius: 0;
   
   background-color: #f7f7f8;
   color: #242325;
 }
-#trollbox_input::selection {
+#trollbox_input::selection, #dudebox_settings_server::selection {
   background-color: #242325 !important;
   color: #f7f7f8 !important;
 }
@@ -148,6 +154,13 @@ h1, h3, h4, b, strong, th, .bold {
 #dudebox_settings_box > h1 {
   margin-bottom: 10px;
 }
+#dudebox_settings_box p, #dudebox_settings_box h2 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#dudebox_settings_box label {
+  padding: 0;
+}
 #dudebox_settings_box > form {
   margin-top: 10px;
 }
@@ -166,4 +179,8 @@ h1, h3, h4, b, strong, th, .bold {
   float: right;
   
   background-color: #2ec0ff;
+}
+#dudebox_settings_server {
+  width: 100%;
+  margin: 0 !important;
 }

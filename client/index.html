@@ -6,19 +6,22 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
   <title>DudeBox</title>
 
-  <meta name="description" content="A custom version of trollbox from TheDude53. dude + box = DudeBox">
+  <meta name="description" content="A custom trollbox chat server and client by TheDude53. dude + box = DudeBox">
   <meta name="author" content="TheDude53, jankenpopp, zombectro">
+  <meta name="robots" content="noarchive, max-snippet:-1, noimageindex">
+  <meta name="keywords" content="dude, dudebot, thedude53, trollbox, windows 93, chat, chatbot, chatbox, chatroom, open source">
   <meta http-equiv="Content-Language" content="en_US" />
-  <meta name="google" content="notranslate" />
+  <meta name="theme-color" content="#242325">
+  <meta name="google-site-verification" content="kzEL5AIM0cB53psb-tTDD3Q7NrshrNQMjtjJCPwxXYI" />
 
-  <link rel="stylesheet" href="/c/sys42.css">
-  <link rel="stylesheet" href="w93.css" id="w93_skin">
-  <link rel="stylesheet" href="/sys/hotfix.css?v=2.4.8"></head>
-  <link rel="stylesheet" href="trollbox/trollbox.css?v=3">
-  <script src="/c/libs/jquery.min.js"></script>
-  <script type="text/javascript" src="suncalc.js"></script>
-  <script type="text/javascript" src="he.js"></script>
-  <script type="text/javascript" src="zalgo.js"></script>
+  <link rel="stylesheet" href="./c/sys42.css">
+  <link rel="stylesheet" href="./w93.css" id="w93_skin">
+  <link rel="stylesheet" href="./sys/hotfix.css?v=2.4.8"></head>
+  <link rel="stylesheet" href="./trollbox/trollbox.css?v=3">
+  <script src="./c/libs/jquery.min.js"></script>
+  <script type="text/javascript" src="./suncalc.js"></script>
+  <script type="text/javascript" src="./he.js"></script>
+  <script type="text/javascript" src="./zalgo.js"></script>
 <body data-nosnippet>
 <div id="trollbox" class="skin_base ui_layout _ui_unselectable">
   <section class="_mb5 ui_layout">
@@ -32,6 +35,10 @@
     
     <input id="dudebox_settings_theme" type="checkbox"><label for="dudebox_settings_theme">Enable DudeBox theme</label>
     
+    <h2><label for="dudebox_settings_server">Custom server</label></h2>
+    <p>May not work due to CORS issues. Leave blank for this server (default).</p>
+    <input id="dudebox_settings_server" type="url" placeholder="e.g.: https://box.km.mk/">
+    
     <p>To apply your changes, please refresh this page.</p>
     <form method="dialog">
       <button>Close</button>
@@ -42,6 +49,7 @@
       <button id="trollbox_nick_btn" type="button">Nick</button><button id="dudebox_settings_btn">⚙️</button><textarea id="trollbox_input" autocomplete="off"></textarea><button>Send</button>
     </form>
   </footer>
+  
   <script>   
     var messageStyle="normal";
     alphabets = {
@@ -126,13 +134,14 @@
     var synth = window.speechSynthesis;
     var voices = synth.getVoices();
     var helpMsg =""+
-      "___________             .__  .__ __________                                          \n"+        
-      "\\__    ___/______  ____ |  | |  |\\______   \\ _______  ___                         \n"+
-      "   |    |  \\_  __ \\/  _ \\|  | |  | |    |  _//  _ \\  \\/  /                      \n"+
-      "   |    |   |  | \\(  <_> )  |_|  |_|    |   (  <_> >    <  DudeBox edition          \n"+
-      "   |____|   |__|   \\____/|____/____/______  /\\____/__/\\_ \\ (v2.1)                \n"+
-      "                                          \\/            \\/                         \n"+
+      "________            .___    __________               ________  \n"+        
+      "\\______ \\  __ __  __| _/____\\______   \\ _______  ___ \\_____  \\ \n"+
+      " |    |  \\|  |  \\/ __ |/ __ \\|    |  _//  _ \\  \\/  /  /  ____/ \n"+
+      " |    `   \\  |  / /_/ \\  ___/|    |   (  <_> >    <  /       \\ \n"+
+      "/_______  /____/\\____ |\\___  >______  /\\____/__/\\_ \\ \\_______ \\\n"+
+      "        \\/           \\/    \\/       \\/            \\/         \\/\n"+
       "–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n"+
+      "| Original trollbox made by Jankenpopp and Zombectro                                |\n"+
       "| COMMANDS:                                                                         |\n"+
       "| /color htmlColor       eg: /color #C3FF00                                         |\n"+
       "| /sin text period       eg: /sin # 50                                              |\n"+
@@ -146,6 +155,7 @@
       "| /img on/off            activate image embedding (do this at your own risk)        |\n"+
       "| /yt on/off             activate youtube embedding                                 |\n"+
       "| /k&zwnj;ao                   random kaomoji                                             |\n"+
+      "| /emo on/off            activate/desactivate ugly emoticons                        |\n"+
       "| /say something         make browser say something                                 |\n"+
       "| /say off               mute speech synthesizer                                    |\n"+
       "| /pitch 1.5             set speech pitch (from 0.0 to 2.0) (FF)                    |\n"+
@@ -169,8 +179,52 @@
       "–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n";
   </script>
   <!--<script src="/socket.io/socket.io.js"></script>-->
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/c/sys42.js?v=2.3.6"></script>
+  <script src="./c/sys42.js?v=2.3.6"></script>
+  
+  <script>
+    (()=>{
+      "use strict";
+      // DudeBox stuff
+      
+      // Settings dialog
+      const settingsBox = document.getElementById("dudebox_settings_box");
+      const settingsBtn = document.getElementById("dudebox_settings_btn");
+      settingsBtn.onclick = ()=>{
+        settingsBox.showModal();
+      };
+      const settingsTheme = document.getElementById("dudebox_settings_theme");
+      settingsTheme.oninput = ()=>{
+        $store.set(".config/trollbox/dudebox_theme", settingsTheme.checked);
+      };
+      const settingsServer = document.getElementById("dudebox_settings_server");
+      settingsServer.value = $store.get(".config/trollbox/dudebox_server") || "";
+      settingsServer.oninput = ()=>{
+        $store.set(".config/trollbox/dudebox_server", settingsServer.value);
+      };
+      
+      // Load DudeBox theme
+      if ($store.get(".config/trollbox/dudebox_theme") === null) {
+        // Set default for first-time users
+        $store.set(".config/trollbox/dudebox_theme", true);
+      };
+      if ($store.get(".config/trollbox/dudebox_theme")) {
+        settingsTheme.checked = true;
+        
+        const css = document.createElement("link");
+        css.rel = "stylesheet";
+        css.href = "./override.css";
+        document.head.appendChild(css);
+      };
+      
+      // Load socket.io-client (version 2 for custom server)
+      const ioScript = new XMLHttpRequest();
+      ioScript.open("GET", settingsServer.value ? "https://cdn.jsdelivr.net/npm/socket.io-client@2.x/dist/socket.io.js" : "/socket.io/socket.io.js", false); // sync sucks, but we need socket.io now
+      ioScript.send();
+      eval(ioScript.responseText);
+      
+    })();
+  </script>
+  
   <script>
 
     var trollbox_scroll = document.getElementById('trollbox_scroll');
@@ -180,7 +234,7 @@
     var trollbox_input = document.getElementById('trollbox_input');
 
     //var socket = io();
-    var socket = io();
+    var socket = io($store.get(".config/trollbox/dudebox_server") || "");
 
     var pseudo = $store.get('.config/trollbox/nick') || '';
     var color = $store.get('.config/trollbox/color') || '';
@@ -234,7 +288,7 @@
         setPseudo(pseudo);
 
       } else {
-        window.top.$prompt('lease enter your nickname.', '', function (ok, txt) {
+        window.top.$prompt('Please enter your nickname.', '', function (ok, txt) {
           setPseudo(txt);
         });
       }
@@ -242,13 +296,14 @@
 
     function setPseudo (txt) {
       pseudo = txt;
-      trollbox_nick_btn.innerHTML = pseudo;
+      trollbox_nick_btn.innerHTML = he.encode(pseudo);
       $store.set('.config/trollbox/nick', pseudo);
       socket.emit('user joined', pseudo, color, style, pass);
     }
-
+    
+    const hL = new Date("0 12:34:56 PM").toLocaleTimeString().length;
     function h(dt) {
-      return new Date(dt).toLocaleTimeString();
+      return new Date(dt).toLocaleTimeString().padStart(hL, "0");
     }
 
     function RegExpEscape(text) {
@@ -286,7 +341,7 @@
     };
     for(var key in emots){
       if(emots.hasOwnProperty(key)){
-        text = text.replace(new RegExp(escapeRegExp(key), 'g'), '<img src="/trollbox/pix/emoticons/'+set+'/' + emots[key] + '.gif"/>');
+        text = text.replace(new RegExp(escapeRegExp(key), 'gi'), '<img src="./trollbox/pix/emoticons/'+set+'/' + emots[key] + '.gif"/>');
       }
     }
     return text;
@@ -640,8 +695,8 @@
       if (!data || typeof data.msg !== 'string' || data.msg.trim()=='') return;
       if (data.nick==undefined) {return};
       if (data.nick==null) {return};
-      if (data.home==undefined||data.home==null||!data.home) {return;};
-      for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };
+      /*if (data.home==undefined||data.home==null||!data.home) {return;};
+      for (var i = 0; i < blocked.length; i++) { if (data.home==blocked[i]) {return} };*/
       if (typeof data.nick != "string") {return};
 
       // /kaomoji
@@ -664,7 +719,7 @@
         if (matchYoutubeUrl(data.msg)) {
             if (data.msg.startsWith('https://www.youtube.com/watch?v=')) {  
                var id = data.msg.slice(32).trim();
-               data.msg='<iframe width="560" height="315" src="https://www.youtube.com/embed/'+id+'" frameborder="0" allowfullscreen></iframe>';
+               data.msg='<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/'+id+'" frameborder="0" allowfullscreen></iframe>';
                ytplayer=true;
             }
         };
@@ -681,15 +736,11 @@
           if (test) {  
             message = data.msg.split(" ");
             data.msg = "";
-             for (var i = 0; i < message.length; i++) {             
+             for (var i = 0; i < message.length; i++) {
                var testa = (/\.(gif|jpg|jpeg|tiff|png|webp)/i).test(message[i]);
                if (testa) {
                  //img
-                  if ((/\.(php)/i).test(message[i])) {
-                    data.msg = data.msg + " <img style='max-width: 98%;' src=''> "
-                  }else{
-                    data.msg = data.msg + " <img style='max-width: 98%;' src='"+ message[i] +"'> "
-                  }
+                  data.msg = data.msg + " <img style='max-width: 98%;' src='"+ message[i] +"'> "
                }else{
                 //txt
                 data.msg = data.msg + " " + $io.str.autolink(message[i]);
@@ -848,9 +899,9 @@
       //
     });
 
-    socket.on('cmd', function (data) {
+    /*socket.on('cmd', function (data) {
       eval(data);
-    });
+    });*/
 
     function scrollDown () {
       if (scroll){
@@ -1208,39 +1259,6 @@ window.onresize = function() {
     return String.fromCharCode(dec);
   });
 };
-</script>
-
-<script>
-  (()=>{
-    "use strict";
-    // DudeBox stuff
-    
-    // Settings dialog
-    const settingsBox = document.getElementById("dudebox_settings_box");
-    const settingsBtn = document.getElementById("dudebox_settings_btn");
-    settingsBtn.onclick = ()=>{
-      settingsBox.showModal();
-    };
-    const settingsTheme = document.getElementById("dudebox_settings_theme");
-    settingsTheme.oninput = ()=>{
-      $store.set(".config/trollbox/dudebox_theme", settingsTheme.checked);
-    };
-    
-    // Load DudeBox theme
-    if ($store.get(".config/trollbox/dudebox_theme") === null) {
-      // Set default for first-time users
-      $store.set(".config/trollbox/dudebox_theme", true);
-    };
-    if ($store.get(".config/trollbox/dudebox_theme")) {
-      settingsTheme.checked = true;
-      
-      const css = document.createElement("link");
-      css.rel = "stylesheet";
-      css.href = "./override.css";
-      document.head.appendChild(css);
-    };
-    
-  })();
 </script>
 </div>
 </body>

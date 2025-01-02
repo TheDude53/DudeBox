@@ -1,0 +1,12 @@
+<script>
+  (async ()=>{
+    // Load admin UI from the real site
+    const ui = await (await fetch("https://cdn.jsdelivr.net/gh/socketio/socket.io-admin-ui/ui/dist/index.html")).text();
+    
+    // Wipe document and write it with base adjustment (we do this to bypass CORS crap because then the page is technically on the same origin)
+    document.open();
+    document.write("<base href=\"https://cdn.jsdelivr.net/gh/socketio/socket.io-admin-ui/ui/dist/\" />");
+    document.write(ui);
+    document.close();
+  })();
+</script>
