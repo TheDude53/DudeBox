@@ -17,7 +17,7 @@ Based on the original [Windows 93 trollbox](https://www.windows93.net/trollbox/)
 ## How to run
 If you don't want to run it yourself, you can check out the demo server at https://dudebox.glitch.me.
 
-To start the server, simply run `npm i && npm run server` in the root project directory. You can change the server's port via the `PORT` environment variable, otherwise it will default to 8081. If you plan on running a public instance of DudeBox, please check the configuration options in `config.js`.
+To start the server, simply run `npm i && npm run server` in the root project directory with Node.js version 16 or later. You can change the server's port via the `PORT` environment variable, otherwise it will default to 8081. If you plan on running a public instance of DudeBox, please check the configuration options in `config.js`.
 
 > [!NOTE]
 > Because this is designed to run on [Glitch](https://glitch.com), the main `npm start` command will run a script to sync with this repository before starting the server. It's only going to work properly if you're on Linux and have Git installed.
