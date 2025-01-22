@@ -21,7 +21,7 @@
   "dependencies": {
     "socket.io": "4.x",
     "@socket.io/admin-ui": "latest",
-    "he": "latest",
+    "html-entities": "latest",
     "http-server": "14.x"
   },
   "private": true

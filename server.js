@@ -20,7 +20,7 @@ const {
 } = require("./config.js");
 
 // Prepare the great HTML entity utility
-const he = require("he");
+const he = require("html-entities");
 
 // Function for removing newlines
 function stripNewlines(text) {
